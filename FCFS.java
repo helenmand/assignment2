@@ -13,9 +13,11 @@ public class FCFS extends Scheduler {
     public Process getNextProcess() {
         /* TODO: you need to add some code here
          * and change the return value */
-        if (processes.size() > 0){
-            return processes.get(0); // returns a process, if the process list is not empty
+        if (processes.size() > 0 &&
+           (processes.get(0).getPCB().getState().equals(ProcessState.READY) || processes.get(0).getPCB().getState().equals(ProcessState.RUNNING))) 
+        {
+            return processes.get(0); // returns a READY/RUNNING process, if the process list is not empty
         }
-        return null; // or else returns null
+        return null; // or else, returns null
     }
 }
