@@ -23,7 +23,8 @@ public class ProcessControlBlock {
         /* TODO: you need to add some code here
          * Hint: every process should get a unique PID */
         this.pid = createID(); // change this line
-        
+        this.timeline = new ArrayList<Integer[]>();
+        this.pidTotal += 1;
     }
 
     public ProcessState getState() {
