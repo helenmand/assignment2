@@ -22,7 +22,7 @@ public class ProcessControlBlock {
         this.stopTimes = new ArrayList<Integer>();
         /* TODO: you need to add some code here
          * Hint: every process should get a unique PID */
-        this.pid = 0; // change this line
+        this.pid = createID(); // change this line
         
     }
 
@@ -65,10 +65,11 @@ public class ProcessControlBlock {
     }
 
     private int createID(){
+        //return (this.hashCode() % 100000 > 0) ? this.hashCode() % 100000 : (this.hashCode() % 100000)*(-1);
+
         int id = this.hashCode() % 100000;
 
-        if (id < 0){ return id*(-1); }
-        return id;
+        return (id < 0) ? id*(-1) : id;
     }
 
     private void updateTimeline() {
