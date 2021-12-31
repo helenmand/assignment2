@@ -8,11 +8,7 @@ public class ProcessControlBlock {
     // for statistical purposes
     private ArrayList<Integer> startTimes; // when the process starts running
     private ArrayList<Integer> stopTimes;  // when the process stops running
-
-    private ArrayList<Integer[]> timeline;
-    private int startIndex;
-    private int stopIndex;
-    private int timelineIndex;
+    private int initialReadyTime;
     
     private static int pidTotal= 0;
     
@@ -20,10 +16,10 @@ public class ProcessControlBlock {
         this.state = ProcessState.NEW;
         this.startTimes = new ArrayList<Integer>();
         this.stopTimes = new ArrayList<Integer>();
+        this.initialReadyTime = -1;
         /* TODO: you need to add some code here
          * Hint: every process should get a unique PID */
         this.pid = createID(); // change this line
-        this.timeline = new ArrayList<Integer[]>();
         this.pidTotal += 1;
     }
 
@@ -40,7 +36,11 @@ public class ProcessControlBlock {
 
          switch (state) {
             case READY:
-                 stopTimes.add(currentClockTime);
+                 if(initialReadyTime == -1) {
+                    initialReadyTime = currentClockTime;
+                 } else {
+                    stopTimes.add(currentClockTime);
+                 }
                  break;
             case RUNNING:
                 startTimes.add(currentClockTime);
@@ -65,6 +65,10 @@ public class ProcessControlBlock {
         return stopTimes;
     }
 
+    public int getInitialReadyTime() {
+        return initialReadyTime;
+    }
+
     private int createID(){
         //return (this.hashCode() % 100000 > 0) ? this.hashCode() % 100000 : (this.hashCode() % 100000)*(-1);
 
@@ -73,24 +77,4 @@ public class ProcessControlBlock {
         return (id < 0) ? id*(-1) : id;
     }
 
-    private void updateTimeline() {
-        while(startIndex<startTimes.size() && stopIndex<stopTimes.size()) {
-            if(startTimes.get(startIndex) < stopTimes.get(stopIndex)) {
-                timeline.set(timelineIndex, new Integer[] {startTimes.get(startIndex), 1});
-
-                startIndex++;
-                timelineIndex++;
-            } else {
-                timeline.set(timelineIndex, new Integer[] {stopTimes.get(startIndex), 0});
-
-                stopIndex++;
-                timelineIndex++;
-            }
-        }
-    }
-
-    public ArrayList<Integer[]> getTimeline() {
-        updateTimeline();
-        return timeline;
-    }
 }

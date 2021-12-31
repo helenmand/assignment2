@@ -41,26 +41,23 @@ public class Process {
     public double getWaitingTime() {
         /* TODO: you need to add some code here
          * and change the return value */
-        int sum = 0;
-        for(int i=1;i<pcb.getTimeline().size();i++) {
-            if(pcb.getTimeline().get(i-1)[1] == 0 && pcb.getTimeline().get(i)[1] == 1) {
-                sum = pcb.getTimeline().get(i)[0] - pcb.getTimeline().get(i-1)[0];
-            }
+        int sum = pcb.getStartTimes().get(0) -pcb.getInitialReadyTime();
+        for(int i=0;i<pcb.getStartTimes().size()-1 && i<pcb.getStopTimes().size();i++) {
+            sum += pcb.getStartTimes().get(i+1) - pcb.getStopTimes().get(i);
         }
-
         return sum;
     }
     
     public double getResponseTime() {
         /* TODO: you need to add some code here
          * and change the return value */
-        return pcb.getStartTimes().get(0) - pcb.getStopTimes().get(0);
+        return pcb.getStartTimes().get(0) - pcb.getInitialReadyTime();
     }
     
     public double getTurnAroundTime() {
         /* TODO: you need to add some code here
          * and change the return value */
-        return pcb.getStopTimes().get(0) - pcb.getStopTimes().get(-1);
+        return pcb.getInitialReadyTime() - pcb.getStopTimes().get(-1);
     }
 
     
