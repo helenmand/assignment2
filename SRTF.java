@@ -44,7 +44,7 @@ public class SRTF extends Scheduler {
     	}
     	else {
     		
-    		if(processes.get(0).getPCB().getState()== ProcessState.READY || processes.get(0).getPCB().getState()== ProcessState.RUNNING) {
+    		if(processes.get(0).getPCB().getState().equals(ProcessState.READY) || processes.get(0).getPCB().getState().equals(ProcessState.RUNNING)) {
 	    		// Update the burst time of a process to be executed 
 	    		int newBurstTime=BurstTimes.get(0)-1;
 	    		// Remove the old time
