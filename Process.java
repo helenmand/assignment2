@@ -55,5 +55,9 @@ public class Process {
         return pcb.getStopTimes().get(0) - pcb.getStopTimes().get(-1);
     }
 
+    public int getBurstTime() {
+        return burstTime;
+    }
+
     
 }
