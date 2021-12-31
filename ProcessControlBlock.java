@@ -64,6 +64,13 @@ public class ProcessControlBlock {
         return stopTimes;
     }
 
+    private int createID(){
+        int id = this.hashCode() % 100000;
+
+        if (id < 0){ return id*(-1); }
+        return id;
+    }
+
     private void updateTimeline() {
         while(startIndex<startTimes.size() && stopIndex<stopTimes.size()) {
             if(startTimes.get(startIndex) < stopTimes.get(stopIndex)) {
@@ -84,5 +91,4 @@ public class ProcessControlBlock {
         updateTimeline();
         return timeline;
     }
-    
 }
