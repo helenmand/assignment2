@@ -15,8 +15,8 @@ public class FCFS extends Scheduler {
          * and change the return value */
         if (processes.size() > 0){
             Process head = processes.get(0);
-            return head;
+            return head; // returns a process, if the process list is not empty
         }
-        return null;
+        return null; // or else returns null
     }
 }
