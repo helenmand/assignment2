@@ -13,6 +13,14 @@ public class Process {
         this.memoryRequirements = memoryRequirements;
         this.pcb = new ProcessControlBlock();
     }
+
+    public int getBurstTime() {
+        return burstTime;
+    }
+
+    public int getArrivalTime() {
+        return arrivalTime;
+    }
     
     public ProcessControlBlock getPCB() {
         return this.pcb;
@@ -55,9 +63,7 @@ public class Process {
         return pcb.getStopTimes().get(0) - pcb.getStopTimes().get(-1);
     }
 
-    public int getBurstTime() {
-        return burstTime;
-    }
+    
 
     
 }
