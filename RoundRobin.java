@@ -5,7 +5,7 @@ public class RoundRobin extends Scheduler {
     private int process_timer;
     private int process_pos;
     
-    //Test comment
+    //Edit cause my pc has a different git account for no reason
     public RoundRobin() {
         this.quantum = 1; // default quantum
         /* TODO: you _may_ need to add some code here */
