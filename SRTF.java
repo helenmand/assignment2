@@ -22,11 +22,13 @@ public class SRTF extends Scheduler {
 	    	
 	    	// find the specific index to add the process
 	    	while(index<processes.size() && !found) {
-	    		// Checks if the process have shorter burst time 
+	    		// Checks if the process have the shorter burst time 
 	    		if(BurstTimes.get(index)>p.getBurstTime()) {
 	    			// add the process
 	    			processes.add(index,p);
 	    			BurstTimes.add(index,p.getBurstTime());
+	    			// the specific index found
+	    			found=true;
 	    		}
 	    		index+=1;
 	    	}
@@ -43,7 +45,7 @@ public class SRTF extends Scheduler {
     		return null;
     	}
     	else {
-    		
+    		// checks if the process is in state READY or RUNNING
     		if(processes.get(0).getPCB().getState().equals(ProcessState.READY) || processes.get(0).getPCB().getState().equals(ProcessState.RUNNING)) {
 	    		// Update the burst time of a process to be executed 
 	    		int newBurstTime=BurstTimes.get(0)-1;
