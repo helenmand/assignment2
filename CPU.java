@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 
+//Edit cause my pc has a different git account for no reason
 public class CPU {
 
     public static int clock = 0; // this should be incremented on every CPU cycle
