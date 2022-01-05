@@ -46,7 +46,7 @@ public class CPU {
     public void tick() {
         /* TODO: you need to add some code here
          * Hint: this method should run once for every CPU cycle */
-        System.out.print("Tick: "); System.out.print(clock); System.out.print(" -- ");
+        System.out.print("Tick: " + clock + " -- ");
         for (Process process : processes)
             if (process.getArrivalTime() == clock) {
                  scheduler.addProcess(process);
@@ -57,29 +57,29 @@ public class CPU {
             }
         if (stateType != -1) {
             if (stateType == 0) {
-                System.out.print("Process "); System.out.print(currentProcess); System.out.println(": Running -> Ready");
+                System.out.println("Process " + currentProcess + ": Running -> Ready");
                 currentProcessItem.waitInBackground();
                 currentProcessItem.getPCB().setState(ProcessState.READY, clock - 1);
                 processRunning = false;
                 stateType = -1;
             }
             else if (stateType == 1){
-                System.out.print("Process "); System.out.print(currentProcess); System.out.println(": Ready -> Running");
+                System.out.println("Process " + currentProcess + ": Ready -> Running");
                 currentProcessItem.run();
                 currentProcessItem.getPCB().setState(ProcessState.RUNNING, clock);
                 processRunning = true;
-                checkBurstTime();
+                //checkBurstTime();
                 stateType = -1;
             }
         }
         else if (newProcesseses.size() > 0) {
             if (!processRunning) {
-                System.out.print("Process "); System.out.print(newProcesseses.get(0).getPCB().getPid()); System.out.println(": New -> Ready");
+                System.out.println("Process " + newProcesseses.get(0).getPCB().getPid() + ": New -> Ready");
                 newProcesseses.get(0).getPCB().setState(ProcessState.READY, clock);
                 newProcesseses.remove(0);
             }
             else {
-                System.out.println("Waiting");
+                System.out.println("Waiting (Stopping Process)");
                 stateType = 0;
             }
         }
@@ -94,11 +94,11 @@ public class CPU {
                     checkBurstTime();
                 }
                 else if (previousProcessItem == null || !processRunning) {
-                    System.out.println("Waiting");
+                    System.out.println("Waiting (Starting process)");
                     stateType = 1;
                 }
                 else {
-                    System.out.print("Process "); System.out.print(previousProcess); System.out.println(": Running -> Ready");
+                    System.out.println("Process " + previousProcess + ": Running -> Ready");
                     previousProcessItem.waitInBackground();
                     previousProcessItem.getPCB().setState(ProcessState.READY, clock);
                     stateType = 1;
@@ -121,9 +121,9 @@ public class CPU {
         int timePassed = 0;
         for (int i = size - 1; i >= 0; i--) {
             if (i == size - 1)
-                timePassed += (clock + 1) - currentProcessItem.getPCB().getStartTimes().get(i);
+                timePassed += (clock + 1) - (currentProcessItem.getPCB().getStartTimes().get(i) + 1);
             else
-                timePassed += currentProcessItem.getPCB().getStopTimes().get(i) - currentProcessItem.getPCB().getStartTimes().get(i);
+                timePassed += currentProcessItem.getPCB().getStopTimes().get(i) - (currentProcessItem.getPCB().getStartTimes().get(i) + 1);
         }
         if (timePassed == currentProcessItem.getBurstTime()) {
             System.out.print("Process "); System.out.print(currentProcess); System.out.println(": Running -> Terminated");

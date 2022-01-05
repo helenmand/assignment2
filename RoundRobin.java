@@ -29,8 +29,10 @@ public class RoundRobin extends Scheduler {
         else if (currentProcess == null && processes.get(0).getPCB().getState() == ProcessState.READY) {
             currentProcess = processes.get(0);
             process_pos = 0;
-            process_timer = 1;
+            process_timer = 0;
         }
+        else if (currentProcess.getPCB().getState() == ProcessState.READY)
+            process_timer = 0;
         else if (process_timer == quantum || currentProcess.getPCB().getState() == ProcessState.TERMINATED) {
             int pos;
             if (currentProcess.getPCB().getState() == ProcessState.TERMINATED)
@@ -45,9 +47,9 @@ public class RoundRobin extends Scheduler {
                 currentProcess = processes.get(0);
                 process_pos = 0;
             }
-            process_timer = 1;
+            process_timer = 0;
         }
-        else if (currentProcess.getPCB().getState() == ProcessState.RUNNING || currentProcess.getPCB().getState() == ProcessState.READY)
+        else if (currentProcess.getPCB().getState() == ProcessState.RUNNING)
             process_timer++;
         else
             return null;
