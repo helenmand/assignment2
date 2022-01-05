@@ -4,6 +4,7 @@ public class RoundRobin extends Scheduler {
     private Process currentProcess;
     private int process_timer;
     private int process_pos;
+    private int arraySize;
     
     //Edit cause my pc has a different git account for no reason
     public RoundRobin() {
@@ -30,10 +31,9 @@ public class RoundRobin extends Scheduler {
             currentProcess = processes.get(0);
             process_pos = 0;
             process_timer = 0;
+            arraySize = processes.size();
         }
-        else if (currentProcess.getPCB().getState() == ProcessState.READY)
-            process_timer = 0;
-        else if (process_timer == quantum || currentProcess.getPCB().getState() == ProcessState.TERMINATED) {
+        else if (process_timer == quantum || currentProcess.getPCB().getState() == ProcessState.TERMINATED || processes.size() != arraySize) {
             int pos;
             if (currentProcess.getPCB().getState() == ProcessState.TERMINATED)
                 pos = process_pos - 1;
@@ -48,9 +48,12 @@ public class RoundRobin extends Scheduler {
                 process_pos = 0;
             }
             process_timer = 0;
+            arraySize = processes.size();
         }
         else if (currentProcess.getPCB().getState() == ProcessState.RUNNING)
             process_timer++;
+        else if (currentProcess.getPCB().getState() == ProcessState.READY)
+            process_timer = 0;
         else
             return null;
         return currentProcess;
