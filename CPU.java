@@ -90,7 +90,7 @@ public class CPU {
             if (currentProcessItem != null) {
                 currentProcess = currentProcessItem.getPCB().getPid();
                 if (currentProcess == previousProcess && processRunning) {
-                    System.out.print("Process "); System.out.print(currentProcess); System.out.println(": Running");
+                    System.out.println("Process " + currentProcess + ": Running");
                     checkBurstTime();
                 }
                 else if (previousProcessItem == null || !processRunning) {
@@ -126,7 +126,7 @@ public class CPU {
                 timePassed += currentProcessItem.getPCB().getStopTimes().get(i) - (currentProcessItem.getPCB().getStartTimes().get(i) + 1);
         }
         if (timePassed == currentProcessItem.getBurstTime()) {
-            System.out.print("Process "); System.out.print(currentProcess); System.out.println(": Running -> Terminated");
+            System.out.println("Process " + currentProcess + ": Running -> Terminated");
             currentProcessItem.getPCB().setState(ProcessState.TERMINATED, clock);
             scheduler.removeProcess(currentProcessItem);
             processesCount--;
