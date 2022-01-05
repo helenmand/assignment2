@@ -51,29 +51,34 @@ public class SRTF extends Scheduler {
     		return null;
     	}
     	else {
-    		// checks if the process is in state READY or RUNNING
-    		if(processes.get(0).getPCB().getState().equals(ProcessState.READY) || processes.get(0).getPCB().getState().equals(ProcessState.RUNNING)) {
-    			
-    			// Checks if the process is over
-	    		if(BurstTimes.get(0)==0) {
-	    			// remove the first place of array 
-	    			BurstTimes.remove(0);
-	    		}
-	    		
-	    		// Update the burst time of a process to be executed 
-    			int newBurstTime=BurstTimes.get(0)-1;
-	    		
-		    	// Remove the old time
-		    	BurstTimes.remove(0);
-		    	// Add the new time 
-		    	BurstTimes.add(0,newBurstTime);
-	    		
-		    	// return the first process from array 
-		    	// that has the shortest remaining time first
-		        return processes.get(0);
+    		// checks if the process is in state READY
+    		if(processes.get(0).getPCB().getState().equals(ProcessState.READY)){
+    			return processes.get(0);
     		}
     		else {
-    			return null;
+    			// checks if the process is in state RUNNING
+    			if(processes.get(0).getPCB().getState().equals(ProcessState.RUNNING)) {
+	    			// Checks if the process is over
+		    		if(BurstTimes.get(0)==0) {
+		    			// remove the first place of array 
+		    			BurstTimes.remove(0);
+		    		}
+		    		
+		    		// Update the burst time of a process to be executed 
+	    			int newBurstTime=BurstTimes.get(0)-1;
+		    		
+			    	// Remove the old time
+			    	BurstTimes.remove(0);
+			    	// Add the new time 
+			    	BurstTimes.add(0,newBurstTime);
+		    		
+			    	// return the first process from array 
+			    	// that has the shortest remaining time first
+			        return processes.get(0);
+	    			}
+	    		else {
+	    			return null;
+	    		}
     		}
     	}
     }
