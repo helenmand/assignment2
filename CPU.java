@@ -56,6 +56,28 @@ public class CPU {
                     //rejectedProcesses.add(process);
             }
         switch(stateType) {
+            case -1:
+                if (newProcesseses.size() > 0) {
+                    if (!processRunning) {
+                        System.out.println("Process " + newProcesseses.get(0).getPCB().getPid() + ": New -> Ready");
+                        newProcesseses.get(0).getPCB().setState(ProcessState.READY, clock);
+                        newProcesseses.remove(0);
+                    }
+                    else {
+                        System.out.println("Waiting (Stopping Process)");
+                        stateType = 0;
+                    }
+                }
+                else {
+                    previousProcess = currentProcess;
+                    previousProcessObject = currentProcessObject;
+                    currentProcessObject = scheduler.getNextProcess();
+                    if (currentProcessObject != null)
+                        checkCurrentProcess();
+                    else
+                        System.out.println("Waiting");
+                }
+                break;
             case 0:
                 System.out.println("Process " + currentProcess + ": Running -> Ready");
                 currentProcessObject.waitInBackground();
@@ -70,42 +92,6 @@ public class CPU {
                 processRunning = true;
                 //checkBurstTime();
                 stateType = -1;
-                break;
-            case -1:
-                if (newProcesseses.size() > 0) {
-                    if (!processRunning) {
-                        System.out.println("Process " + newProcesseses.get(0).getPCB().getPid() + ": New -> Ready");
-                        newProcesseses.get(0).getPCB().setState(ProcessState.READY, clock);
-                        newProcesseses.remove(0);
-                    } else {
-                        System.out.println("Waiting (Stopping Process)");
-                        stateType = 0;
-                    }
-                }
-                else {
-                    previousProcess = currentProcess;
-                    previousProcessObject = currentProcessObject;
-                    currentProcessObject = scheduler.getNextProcess();
-                    if (currentProcessObject != null) {
-                        currentProcess = currentProcessObject.getPCB().getPid();
-                        if (currentProcess == previousProcess && processRunning) {
-                            System.out.println("Process " + currentProcess + ": Running");
-                            checkBurstTime();
-                        }
-                        else if (previousProcessObject == null || !processRunning) {
-                            System.out.println("Waiting (Starting process)");
-                            stateType = 1;
-                        }
-                        else {
-                            System.out.println("Process " + previousProcess + ": Running -> Ready");
-                            previousProcessObject.waitInBackground();
-                            previousProcessObject.getPCB().setState(ProcessState.READY, clock);
-                            stateType = 1;
-                        }
-                    }
-                    else
-                        System.out.println("Waiting");
-                }
                 break;
         }
     }
@@ -134,6 +120,24 @@ public class CPU {
             currentProcessObject = null;
             currentProcess = 0;
             processRunning = false;
+        }
+    }
+
+    private void checkCurrentProcess() {
+        currentProcess = currentProcessObject.getPCB().getPid();
+        if (currentProcess == previousProcess && processRunning) {
+            System.out.println("Process " + currentProcess + ": Running");
+            checkBurstTime();
+        }
+        else if (previousProcessObject == null || !processRunning) {
+            System.out.println("Waiting (Starting process)");
+            stateType = 1;
+        }
+        else {
+            System.out.println("Process " + previousProcess + ": Running -> Ready");
+            previousProcessObject.waitInBackground();
+            previousProcessObject.getPCB().setState(ProcessState.READY, clock);
+            stateType = 1;
         }
     }
 }
