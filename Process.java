@@ -4,6 +4,7 @@ public class Process {
     private int arrivalTime;
     private int burstTime;
     private int memoryRequirements;
+    private int memoryLocation;
 
     
     
@@ -11,6 +12,7 @@ public class Process {
         this.arrivalTime = arrivalTime;
         this.burstTime = burstTime;
         this.memoryRequirements = memoryRequirements;
+        this.memoryLocation=-1;
         this.pcb = new ProcessControlBlock();
     }
 
@@ -20,6 +22,14 @@ public class Process {
 
     public int getArrivalTime() {
         return arrivalTime;
+    }
+    
+    public int getMemoryRequirements() {
+    	return memoryRequirements;
+    }
+    
+    public int getMemoryLocation() {
+    	return memoryLocation;
     }
     
     public ProcessControlBlock getPCB() {
