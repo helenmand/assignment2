@@ -50,10 +50,10 @@ public class CPU {
         for (Process process : processes)
             if (process.getArrivalTime() == clock) {
                  scheduler.addProcess(process);
-                 //if (mmu.loadProcessIntoRAM(process))
+                 if (mmu.loadProcessIntoRAM(process))
                     newProcesseses.add(process);
-                 //else
-                    //rejectedProcesses.add(process);
+                 else
+                    rejectedProcesses.add(process);
             }
         switch(stateType) {
             case -1:
@@ -90,18 +90,16 @@ public class CPU {
                 currentProcessObject.run();
                 currentProcessObject.getPCB().setState(ProcessState.RUNNING, clock);
                 processRunning = true;
-                //checkBurstTime();
                 stateType = -1;
                 break;
         }
-    }
-        /*for (Process process : rejectedProcesses) {
-            scheduler.addProcess(process);
+        for (Process process : rejectedProcesses) {
             if (mmu.loadProcessIntoRAM(process)) {
                 newProcesseses.add(process);
                 rejectedProcesses.remove(process);
             }
-        }*/
+        }
+    }
 
     private void checkBurstTime() {
         int size = currentProcessObject.getPCB().getStartTimes().size();
@@ -114,6 +112,12 @@ public class CPU {
         }
         if (timePassed == currentProcessObject.getBurstTime()) {
             System.out.println("Process " + currentProcess + ": Running -> Terminated");
+            ArrayList<MemorySlot> usedMemorySlots = mmu.getCurrentlyUsMemorySlots();
+            for (int i = 0; i < usedMemorySlots.size(); i++)
+                if (usedMemorySlots.get(i).getStart() == currentProcessObject.getMemoryLocation()) {
+                    usedMemorySlots.remove(i);
+                    break;
+                }
             currentProcessObject.getPCB().setState(ProcessState.TERMINATED, clock);
             scheduler.removeProcess(currentProcessObject);
             processesCount--;
