@@ -51,7 +51,7 @@ public class FirstFit extends MemoryAllocationAlgorithm {
             }
             
             //checks if process fits between start of block and start of first slot
-            if(!fit && startFlag.isEmpty()) {
+            if(!fit && !startFlag.isEmpty()) {
                 if(startFlag.get(0)-currentBlockStart>=p.getMemoryRequirements()) {
                     fit = true;
                     address = currentBlockStart; 
@@ -60,7 +60,7 @@ public class FirstFit extends MemoryAllocationAlgorithm {
             
 
             //checks if process fits between any slot in block
-            if(!fit && startFlag.isEmpty()) {
+            if(!fit && !startFlag.isEmpty()) {
                 for(int j=1;j<startFlag.size() && !fit;j++) {
                     if(startFlag.get(j)-endFlag.get(j-1)-1>=p.getMemoryRequirements()) {
                         fit = true;
@@ -70,7 +70,7 @@ public class FirstFit extends MemoryAllocationAlgorithm {
             }
 
             //checks if process fits between end of last slot and end of block
-            if(!fit && startFlag.isEmpty()) {
+            if(!fit && !startFlag.isEmpty()) {
                 if(currentBlockEnd-endFlag.get(endFlag.size()-1)>=p.getMemoryRequirements()) {
                     fit = true;
                     address = endFlag.get(endFlag.size()-1)+1;
