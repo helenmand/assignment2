@@ -14,6 +14,58 @@ public class FirstFit extends MemoryAllocationAlgorithm {
          * loaded into if the process fits. In case the process doesn't fit, it
          * should return -1. */
 
+        ArrayList<Integer> startFlag = new ArrayList<Integer>();
+        ArrayList<Integer> endFlag = new ArrayList<Integer>();
+        int currentBlockStart;
+        int currentBlockEnd;
+
+
+        //Check every block, quit if process fits
+        for(int i=0;i<availableBlockSizes.length && !fit;i++) {
+
+            //Calculate first and last address of block
+            currentBlockStart=0;
+            for(int j=0;j<i;j++) {
+                currentBlockStart+=availableBlockSizes[j];
+            }
+            currentBlockEnd = currentBlockStart+availableBlockSizes[i]-1;
+
+            //get start and end addresses for every slot in current block
+            for(int j=0;currentlyUsedMemorySlots.get(j).getStart()<=currentBlockEnd;j++) {
+                if(currentlyUsedMemorySlots.get(j).getStart()>=currentBlockStart) {
+                    startFlag.add(currentlyUsedMemorySlots.get(j).getStart());
+                    endFlag.add(currentlyUsedMemorySlots.get(j).getEnd());
+                }
+            }
+            
+            //All following ifs check if process fits in current block
+            
+            //checks if process fits between start of block and start of first slot
+            if(startFlag.get(0)-currentBlockStart>=p.getMemoryRequirements()) {
+                fit = true;
+                address = currentBlockStart; 
+            }
+
+
+            //checks if process fits between any slot in block
+            if(!fit) {
+                for(int j=1;j<startFlag.size() && !fit;j++) {
+                    if(startFlag.get(j)-endFlag.get(j-1)-1>=p.getMemoryRequirements()) {
+                        fit = true;
+                        address = endFlag.get(j-1)+1;
+                    }
+                }
+            }
+
+            //checks if process fits between end of last slot and end of block
+            if(!fit) {
+                if(currentBlockEnd-endFlag.get(endFlag.size()-1)>=p.getMemoryRequirements()) {
+                    fit = true;
+                    address = endFlag.get(endFlag.size()-1)+1;
+                }
+            }
+
+        }
         return address;
     }
 
