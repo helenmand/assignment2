@@ -43,7 +43,7 @@ public class MMU {
         	int index=0;
     		int blockStart=0;
     		int blockEnd=availableBlockSizes[0]-1;
-    		while(index<availableBlockSizes.length && !found) {
+    		while(!found) {
     			// Checks if it is on the block
     			if(p.getMemoryLocation()>=blockStart && p.getMemoryLocation()<=blockEnd) {
     				found=true;
