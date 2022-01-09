@@ -141,14 +141,12 @@ public class CPU {
         }
         if (timePassed == currentProcessObject.getBurstTime()) {
             ArrayList<MemorySlot> usedMemorySlots = mmu.getCurrentlyUsMemorySlots();
-            for (int i = 0; i < usedMemorySlots.size(); i++) {
+            for (int i = 0; i < usedMemorySlots.size(); i++)
                 if (usedMemorySlots.get(i).getStart() == currentProcessObject.getMemoryLocation()) {
                     usedMemorySlots.remove(i);
-                    for (MemorySlot mem : usedMemorySlots)
-                        System.out.println(mem.getStart() + " " + mem.getEnd());
                     break;
                 }
-            }
+            System.out.println("Process " + currentProcessObject.getPCB().getPid() + ": Running -> Terminated");
             currentProcessObject.getPCB().setState(ProcessState.TERMINATED, clock);
             scheduler.removeProcess(currentProcessObject);
             processesCount--;

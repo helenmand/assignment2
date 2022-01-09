@@ -40,12 +40,15 @@ public class RoundRobin extends Scheduler {
          * and change the return value */
         if (processes.isEmpty())
             return null;
-        if (currentProcess == null || (process_timer >= quantum && processes.size() != 1) || currentProcess.getPCB().getState() == ProcessState.TERMINATED) {
+        if (currentProcess == null || process_timer == quantum || currentProcess.getPCB().getState() == ProcessState.TERMINATED) {
             if (currentProcess != null && currentProcess.getPCB().getState() != ProcessState.TERMINATED)
                 ReadyQueue.add(currentProcess);
+            if (currentProcess != null && processes.size() == 1)
+                process_timer = 1;
+            else
+                process_timer = 0;
             currentProcess = ReadyQueue.get(0);
             ReadyQueue.remove(0);
-            process_timer = 0;
         }
         else if (currentProcess.getPCB().getState() == ProcessState.RUNNING)
             process_timer++;
