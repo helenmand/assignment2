@@ -51,6 +51,7 @@ public class FirstFit extends MemoryAllocationAlgorithm {
                 for(int i=0;i<currentlyUsedMemorySlots.size() && !inserted;i++) {
                     if(address<currentlyUsedMemorySlots.get(i).getStart()) {
                         currentlyUsedMemorySlots.add(i, slot);
+                        inserted = true;
                     }
                 }
                 if(!inserted) {
