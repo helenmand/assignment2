@@ -31,14 +31,57 @@ public class MMU {
         /* TODO: you need to add some code here
          * Hint: this should return true if the process was able to fit into memory
          * and false if not */
-        int address = algorithm.fitProcess(p, currentlyUsedMemorySlots);
+       
+		
+        // gets the memory address 
+        p.setMemoryLocation(algorithm.fitProcess(p, currentlyUsedMemorySlots));
         
-        if(address != -1) { 
-            loadedProcesses.add(p);
-            p.setMemoryLocation(address);
-            fit = true;
+        // Checks if space was found in the memory
+        if(p.getMemoryLocation()!=-1) {
+        	// Calculates BlockStart and BlockEnd
+        	boolean found=false;
+        	int index=0;
+    		int blockStart=0;
+    		int blockEnd=availableBlockSizes[0]-1;
+    		while(index<availableBlockSizes.length && !found) {
+    			// Checks if it is on the block
+    			if(p.getMemoryLocation()>=blockStart && p.getMemoryLocation()<=blockEnd) {
+    				found=true;
+    			}
+    			else {
+    				index+=1;
+    				blockStart=blockEnd+1;
+    				blockEnd+=availableBlockSizes[index];
+    			}
+    		}
+    		// Creates slot
+    		MemorySlot slot=new MemorySlot(p.getMemoryLocation(),p.getMemoryLocation()+p.getMemoryRequirements()-1,blockStart,blockEnd);
+        	
+        	// Checks if the memory is empty
+        	if(currentlyUsedMemorySlots.size()!=0) {
+		        found= false;
+		        index=0;
+		        // finds the specific position in the array in ascending order of indicators
+		        while(index<currentlyUsedMemorySlots.size() && !found) {
+		        	// checks if it is in the correct position
+		        	if(slot.getStart()<currentlyUsedMemorySlots.get(index).getStart()) {
+		        		currentlyUsedMemorySlots.add(index,slot);
+		        	}	
+		        	index+=1;
+		        }
+		        
+		        // checks if the position was not found and added at the end of the array
+		        if(!found) {
+		        	currentlyUsedMemorySlots.add(slot);
+		        }
+		    }
+        	else {
+        		// There is no other slot in the memory
+        		currentlyUsedMemorySlots.add(slot);
+        	}
+        	fit=true;
         }
-
+        	
         return fit;
     }
 }
