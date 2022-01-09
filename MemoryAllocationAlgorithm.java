@@ -23,6 +23,7 @@ public abstract class MemoryAllocationAlgorithm {
             set = new Integer[2];
             set[0] = blockStart;
             set[1] = blockEnd;
+            freeSpaces.add(set);
         } else {
 
             //find all slots in block
@@ -38,12 +39,14 @@ public abstract class MemoryAllocationAlgorithm {
                 set = new Integer[2];
                 set[0] = blockStart;
                 set[1] = blockEnd;
+                freeSpaces.add(set);
             } else {
                 //add free space that exists between block start and first slot
                 if(startFlag.get(0)>blockStart) {
                     set = new Integer[2];
                     set[0] = blockStart;
                     set[1] = startFlag.get(0)-1;
+                    freeSpaces.add(set);
                 }
                 
                 //add free space that exists between each slot
@@ -52,6 +55,7 @@ public abstract class MemoryAllocationAlgorithm {
                         set = new Integer[2];
                         set[0] = endFlag.get(i-1) + 1;
                         set[1] = startFlag.get(i) - 1;
+                        freeSpaces.add(set);
                     }
                 }
         
@@ -60,9 +64,11 @@ public abstract class MemoryAllocationAlgorithm {
                     set = new Integer[2];
                     set[0] = endFlag.get(endFlag.size()-1)+1;
                     set[1] = blockEnd;
+                    freeSpaces.add(set);
                 }
             }
         }
+
         return freeSpaces;
     }
 }

@@ -14,10 +14,9 @@ public class FirstFit extends MemoryAllocationAlgorithm {
          * loaded into if the process fits. In case the process doesn't fit, it
          * should return -1. */
 
-        ArrayList<Integer> startFlag = new ArrayList<Integer>();
-        ArrayList<Integer> endFlag = new ArrayList<Integer>();
         int currentBlockStart=0;
         int currentBlockEnd=0;
+        ArrayList<Integer[]> freeSpaces;
 
         //Check every block, quit if process fits
         for(int i=0;i<availableBlockSizes.length && !fit;i++) {
@@ -29,55 +28,20 @@ public class FirstFit extends MemoryAllocationAlgorithm {
             }
             currentBlockEnd = currentBlockStart+availableBlockSizes[i]-1;
 
-         
+            //get free space in block
+            freeSpaces = getFreeSpaces(currentlyUsedMemorySlots, currentBlockStart, currentBlockEnd);
 
-            //get start and end addresses for every slot in current block
-            for(int j=0;j<currentlyUsedMemorySlots.size();j++) {
-                if(currentlyUsedMemorySlots.get(j).getStart()>=currentBlockStart && currentlyUsedMemorySlots.get(j).getEnd()<=currentBlockEnd) {
-                    startFlag.add(currentlyUsedMemorySlots.get(j).getStart());
-                    endFlag.add(currentlyUsedMemorySlots.get(j).getEnd());
-                }
-            }
-            
-            //All following ifs check if process fits in current block
-
-
-            //checks if process fits in block, only if there are no other slots in block
-            if(startFlag.isEmpty()) {
-                if(currentBlockEnd-currentBlockStart+1>=p.getMemoryRequirements()) {
+            //check if block fits in any free space
+            for(int j=0;j<freeSpaces.size() && !fit;j++) {
+                if(freeSpaces.get(j)[1] - freeSpaces.get(j)[0] + 1 >= p.getMemoryRequirements()) {
+                    address = freeSpaces.get(j)[0];
                     fit = true;
-                    address = currentBlockStart;
                 }
-            }
-            
-            //checks if process fits between start of block and start of first slot
-            if(!fit && !startFlag.isEmpty()) {
-                if(startFlag.get(0)-currentBlockStart>=p.getMemoryRequirements()) {
-                    fit = true;
-                    address = currentBlockStart; 
-                }
-            }
-            
+            }   
+        }
 
-            //checks if process fits between any slot in block
-            if(!fit && !startFlag.isEmpty()) {
-                for(int j=1;j<startFlag.size() && !fit;j++) {
-                    if(startFlag.get(j)-endFlag.get(j-1)-1>=p.getMemoryRequirements()) {
-                        fit = true;
-                        address = endFlag.get(j-1)+1;
-                    }
-                }
-            }
-
-            //checks if process fits between end of last slot and end of block
-            if(!fit && !startFlag.isEmpty()) {
-                if(currentBlockEnd-endFlag.get(endFlag.size()-1)>=p.getMemoryRequirements()) {
-                    fit = true;
-                    address = endFlag.get(endFlag.size()-1)+1;
-                }
-            }
-            startFlag.clear();
-            endFlag.clear();
+        if(!fit) {
+            //System.out.println("couldnt fit");
         }
 
         //TEMPORARY TESTING CODE MEMORYSLOT ADDING
