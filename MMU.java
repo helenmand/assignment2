@@ -14,7 +14,10 @@ public class MMU {
         this.currentlyUsedMemorySlots = new ArrayList<MemorySlot>();
     }
 
-    // getters
+    /**
+     * Getter 
+     * @return loaded processes
+     */
     public ArrayList<Process> getLoadedProcesses(){
         return this.loadedProcesses;
     }   
@@ -34,9 +37,7 @@ public class MMU {
             loadedProcesses.add(p);
             return true;
         }
-        
-        return fit;
 
-        
+        return fit;
     }
 }
