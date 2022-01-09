@@ -35,6 +35,7 @@ public class MMU {
         
         if(address != -1) { 
             loadedProcesses.add(p);
+            p.setMemoryLocation(address);
             fit = true;
         }
 
