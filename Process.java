@@ -15,6 +15,14 @@ public class Process {
         this.pcb = new ProcessControlBlock();
     }
 
+    //testing
+    public Process(int arrivalTime, int burstTime, int memoryRequirements, int pid) {
+        this.arrivalTime = arrivalTime;
+        this.burstTime = burstTime;
+        this.memoryRequirements = memoryRequirements;
+        this.pcb = new ProcessControlBlock(pid);
+    }
+
     public int getBurstTime() {
         return burstTime;
     }

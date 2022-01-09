@@ -23,6 +23,15 @@ public class ProcessControlBlock {
         this.pidTotal += 1;
     }
 
+    //testing
+    public ProcessControlBlock(int pid) {
+        this.state = ProcessState.NEW;
+        this.startTimes = new ArrayList<Integer>();
+        this.stopTimes = new ArrayList<Integer>();
+        this.initialReadyTime = -1;
+        this.pid = pid;
+    }
+
     public ProcessState getState() {
         return this.state;
     }
