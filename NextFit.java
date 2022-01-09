@@ -5,7 +5,6 @@ public class NextFit extends MemoryAllocationAlgorithm {
 	private int block=0;
 	private int address=0; 
 	private int s=availableBlockSizes[block];
-	private int sumAllBlock=0;
 	
     public NextFit(int[] availableBlockSizes) {
         super(availableBlockSizes);
@@ -37,9 +36,8 @@ public class NextFit extends MemoryAllocationAlgorithm {
 					}
 				index+=1;
 				}
-				
-			}
 			return slots;
+		}	
     }
 
     
@@ -52,21 +50,21 @@ public class NextFit extends MemoryAllocationAlgorithm {
          * should return -1. */
         
         // finds the total memory of the blocks
+        int sumAllBlock=0;
         for(int i=0;i<availableBlockSizes.length;i++) {
     		sumAllBlock+=availableBlockSizes[i];
     	}
-        
         // where the address starts
         int startAddress=this.address;
         
-        ArrayList<MemorySlot> blockSlots;
+        ArrayList<MemorySlot> blockSlots= new ArrayList<>();
         // takes the slots of the block we are
         blockSlots=getSlots(currentlyUsedMemorySlots, s-1);
         int index=0;
         
         do {
         	// This block has no slots or the address is in front of the slots
-        	if(blockSlots.size()==0) {
+        	if(blockSlots==null || blockSlots.size()==0) {
         		// checks if the process can be entered into memory
         		if(s-this.address>=p.getMemoryRequirements()) {
         			// the address at which the process space begins
@@ -105,7 +103,9 @@ public class NextFit extends MemoryAllocationAlgorithm {
         	}
         	
         	// Updates the address
-        	this.address=(this.address+1)%this.sumAllBlock;
+        	if(!fit) {
+        		this.address=(this.address+1)%sumAllBlock;
+        	}
         	// return to the first block
     		if(this.address==0) {
     			block=0;
@@ -115,7 +115,7 @@ public class NextFit extends MemoryAllocationAlgorithm {
     		}
     		else {
     			// next block
-    			if(this.address==this.availableBlockSizes[block]) {
+    			if(this.address==s) {
 	    			block+=1;
 	    			s+=availableBlockSizes[block];
 	    			blockSlots=getSlots(currentlyUsedMemorySlots, s-1);
