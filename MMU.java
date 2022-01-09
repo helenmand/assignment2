@@ -66,6 +66,7 @@ public class MMU {
 		        	// checks if it is in the correct position
 		        	if(slot.getStart()<currentlyUsedMemorySlots.get(index).getStart()) {
 		        		currentlyUsedMemorySlots.add(index,slot);
+		        		found=true;
 		        	}	
 		        	index+=1;
 		        }
