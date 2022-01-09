@@ -40,10 +40,6 @@ public class FirstFit extends MemoryAllocationAlgorithm {
             }   
         }
 
-        if(!fit) {
-            //System.out.println("couldnt fit");
-        }
-
         //TEMPORARY TESTING CODE MEMORYSLOT ADDING
         if(fit) {
             MemorySlot slot = new MemorySlot(address, address+p.getMemoryRequirements()-1, currentBlockStart, currentBlockEnd);
