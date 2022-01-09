@@ -41,25 +41,25 @@ public class FirstFit extends MemoryAllocationAlgorithm {
         }
 
         //TEMPORARY TESTING CODE MEMORYSLOT ADDING
-        if(fit) {
-            MemorySlot slot = new MemorySlot(address, address+p.getMemoryRequirements()-1, currentBlockStart, currentBlockEnd);
-            if(currentlyUsedMemorySlots.isEmpty()) {
-                currentlyUsedMemorySlots.add(slot);
-            } else {
-                boolean inserted = false;
+        // if(fit) {
+        //     MemorySlot slot = new MemorySlot(address, address+p.getMemoryRequirements()-1, currentBlockStart, currentBlockEnd);
+        //     if(currentlyUsedMemorySlots.isEmpty()) {
+        //         currentlyUsedMemorySlots.add(slot);
+        //     } else {
+        //         boolean inserted = false;
                
-                for(int i=0;i<currentlyUsedMemorySlots.size() && !inserted;i++) {
-                    if(address<currentlyUsedMemorySlots.get(i).getStart()) {
-                        currentlyUsedMemorySlots.add(i, slot);
-                        inserted = true;
-                    }
-                }
-                if(!inserted) {
-                    currentlyUsedMemorySlots.add(slot);
-                }
-            }
+        //         for(int i=0;i<currentlyUsedMemorySlots.size() && !inserted;i++) {
+        //             if(address<currentlyUsedMemorySlots.get(i).getStart()) {
+        //                 currentlyUsedMemorySlots.add(i, slot);
+        //                 inserted = true;
+        //             }
+        //         }
+        //         if(!inserted) {
+        //             currentlyUsedMemorySlots.add(slot);
+        //         }
+        //     }
             
-        }
+        // }
         
 
         return address;
