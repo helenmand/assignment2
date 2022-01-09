@@ -115,7 +115,8 @@ public class CPU {
                 break;
         }
 
-        /*At the end of a tick, the array which holds the processes that couldn't be loaded in the RAM gets checked in the event
+        /*
+        At the end of a tick, the array which holds the processes that couldn't be loaded in the RAM gets checked in the event
         that one of these processes can now be loaded (after a process has potentially been terminated).
          */
         int i = 0;
