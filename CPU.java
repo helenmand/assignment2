@@ -118,11 +118,14 @@ public class CPU {
         /*At the end of a tick, the array which holds the processes that couldn't be loaded in the RAM gets checked in the event
         that one of these processes can now be loaded (after a process has potentially been terminated).
          */
-        for (Process process : rejectedProcesses) {
-            if (mmu.loadProcessIntoRAM(process)) {
-                newProcesses.add(process);
-                rejectedProcesses.remove(process);
+        int i = 0;
+        while (rejectedProcesses.size() > 0 && i < rejectedProcesses.size()) {
+            if (mmu.loadProcessIntoRAM(rejectedProcesses.get(i))) {
+                newProcesses.add(rejectedProcesses.get(i));
+                rejectedProcesses.remove(i);
             }
+            else
+                i++;
         }
     }
 
