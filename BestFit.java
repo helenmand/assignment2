@@ -21,9 +21,8 @@ public class BestFit extends MemoryAllocationAlgorithm {
 
         // if there are no candidate blocks, the process does not fit
         if (candidate_blocks.size() == 0) { return address; }
-
-        /*FOR WORST FIT ADD
-        candidate_blocks = reverseArrayList(candidate_blocks);*/
+        
+        ArrayList<Integer[]> available_slots = new ArrayList<Integer[]>();
         
         for (Integer block : candidate_blocks){
             // fininding start and end of the block
@@ -34,7 +33,18 @@ public class BestFit extends MemoryAllocationAlgorithm {
             
             int block_end = block_start + block - 1;
 
-            // fit code
+            // getting the block's available slots  
+            available_slots = getFreeSpaces(currentlyUsedMemorySlots, block_start, block_end);
+
+            for (Integer[] slot : available_slots){
+                if (slot[1] - slot[0] + 1 >= p.getMemoryRequirements()) {
+                    address = slot[0];
+                    fit = true;
+                } 
+            }
+
+            // if the process fits in this block, then there is no need to search other blocks.
+            if(fit){ break; }
         }
 
         return address;
@@ -52,7 +62,7 @@ public class BestFit extends MemoryAllocationAlgorithm {
     private ArrayList<Integer> find_candidate_blocks(int[] blocks, int size){
         ArrayList<Integer> final_blocks = new ArrayList<Integer>();
 
-        for (int i = 0; i < blocks.length; i++){ if ( final_blocks.get(i) >= size ){ final_blocks.add(blocks[i]);} }
+        for (int i = 0; i < blocks.length; i++){ if (blocks[i] >= size ){ final_blocks.add(blocks[i]);} }
         final_blocks.sort(null);
 
         // returns all candidate memory blocks in asceding order.
@@ -70,4 +80,5 @@ public class BestFit extends MemoryAllocationAlgorithm {
         for (int i = 0; i < arr.length; i++){ if (arr[i] == element) { return i; } }   
         return -1;
     }
+    
 }
