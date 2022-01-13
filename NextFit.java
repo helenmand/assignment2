@@ -27,7 +27,8 @@ public class NextFit extends MemoryAllocationAlgorithm {
         int endAddress=this.address+sumAllBlock;
         // 
         int countEndAddress=this.address;
-        
+        // 
+        boolean memoryIsChecked=false;
         ArrayList<Integer[]> freePositions= new ArrayList<>();
         // takes the free spaces of the block
         freePositions=getFreeSpaces(currentlyUsedMemorySlots, this.address, s-1);
@@ -44,32 +45,51 @@ public class NextFit extends MemoryAllocationAlgorithm {
         			this.address+=p.getMemoryRequirements()-1;
         		}
         		else { 
-        				// the address moves to the end of this free space
-        				countEndAddress+=(freePositions.get(index)[1]-this.address);
-        				this.address=freePositions.get(index)[1];
-        				index+=1;
+    				// the address moves to the end of this free space
+    				countEndAddress+=(freePositions.get(index)[1]-this.address);
+    				// checks the address if was start from the middle of the block
+    				// If it has exceeded the end index
+    				if(endAddress<=countEndAddress) {
+    			        // returns the address to the specific position that was in from the beginning
+    					this.address=endAddress-sumAllBlock;
+    					memoryIsChecked=true;
+    				}
+    				else { // moves the address position to the next place
+    					this.address=freePositions.get(index)[1];
+    					index+=1;
+    				}
     			}
         	}
         	else {// the block not has free spaces
         		countEndAddress+=s-this.address;
-        		// checks if it was the last block for to start from the first memory block
-        		if(block+1==this.availableBlockSizes.length) {
-        			block=0;
-        			s=availableBlockSizes[block];
-        			this.address=0;
-        		}
-        		else {// not was the last block, next block
-        			block+=1;
-        			this.address=s;
-        			s+=availableBlockSizes[block];
-        		}
-        		// takes the free spaces of the block
-        		freePositions=getFreeSpaces(currentlyUsedMemorySlots, this.address, s-1);
-        		index=0;
+        		
+        		// checks the address if was start from the middle of the block
+				// If it has exceeded the end index
+				if(endAddress<=countEndAddress) {
+			        // returns the address to the specific position that was in from the beginning
+					this.address=endAddress-sumAllBlock;
+					memoryIsChecked=true;
+				}
+				else {				
+	        		// checks if it was the last block for to start from the first memory block
+	        		if(block+1==this.availableBlockSizes.length) {
+	        			block=0;
+	        			s=availableBlockSizes[block];
+	        			this.address=0;
+	        		}
+	        		else {// not was the last block, next block
+	        			block+=1;
+	        			this.address=s;
+	        			s+=availableBlockSizes[block];
+	        		}
+	        		// takes the free spaces of the block
+	        		freePositions=getFreeSpaces(currentlyUsedMemorySlots, this.address, s-1);
+	        		index=0;
+				}
         	}
         	
-        }while(endAddress>countEndAddress && !fit);
-        
+        }while(!memoryIsChecked && !fit);
+       
         return address;
     }
 
