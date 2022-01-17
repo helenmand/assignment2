@@ -40,7 +40,7 @@ public class NextFit extends MemoryAllocationAlgorithm {
         		// checks if the process can be entered to this free space
         		//        end free space      -     start free space   (+1 because the same space counts for a free space)
         		if(freePositions.get(index)[1]-freePositions.get(index)[0]+1>=p.getMemoryRequirements()) {
-        			address=this.address;
+        			address=freePositions.get(index)[0];
         			fit=true;
         			this.address+=p.getMemoryRequirements()-1;
         		}
