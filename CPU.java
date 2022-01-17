@@ -62,10 +62,24 @@ public class CPU {
             if (process.getArrivalTime() == clock) {
                  if (mmu.loadProcessIntoRAM(process))
                      newProcesses.add(process);
-                 else
-                     rejectedProcesses.add(process);
+                 /*
+                 Checks if the block sizes are enough to hold the process. If they're not, it gets discarded.
+                 Otherwise, it gets added to the rejectedProcesses in order to get another chance in the future.
+                  */
+                 else {
+                     boolean flag = false;
+                     int[] blockSizes = mmu.getAvailableBlockSizes();
+                     for (int blockSize : blockSizes)
+                         if ( blockSize >= process.getMemoryRequirements()) {
+                             flag = true;
+                             break;
+                         }
+                     if (flag)
+                        rejectedProcesses.add(process);
+                     else
+                         processesCount--;
+                 }
             }
-
         /*
         stateType = -1: Checks if there are processes in the state NEW. If there are and there is a process running,
                         the stateType gets updated to 0 (in order to stop the current process at the next cycle).
