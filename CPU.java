@@ -20,6 +20,7 @@ public class CPU {
 
     private boolean processRunning; //If a process is running it's set to true.
     private int stateType; //Information about the next tick.
+    private boolean switchFlag; //Is true when a process gets switched
 
     public CPU(Scheduler scheduler, MMU mmu, Process[] processes) {
         this.scheduler = scheduler;
@@ -40,7 +41,8 @@ public class CPU {
         rejectedProcesses = new ArrayList<>();
         processesCount = processes.length;
         processRunning = false;
-        stateType = -1;
+        switchFlag = false;
+        stateType = 1;
         while (processesCount > 0) {
             tick();
             clock++;
@@ -55,64 +57,72 @@ public class CPU {
         /* TODO: you need to add some code here
          * Hint: this method should run once for every CPU cycle */
 
-        System.out.print("Tick: " + clock + " -- ");
+        System.out.println("----------\n" + "Tick " + clock + ":");
 
         //Checks if a process is supposed to arrive now. If it does, it tries to allocate RAM to it.
         for (Process process : processes)
             if (process.getArrivalTime() == clock) {
-                 if (mmu.loadProcessIntoRAM(process))
+                 if (mmu.loadProcessIntoRAM(process)) {
+                     System.out.println("Process " + process.getPCB().getPid() + ": loaded");
                      newProcesses.add(process);
-                 else
-                     rejectedProcesses.add(process);
+                     if (!processRunning)
+                         stateType = 0;
+                 }
+                 /*
+                 Checks if the block sizes are enough to hold the process. If they're not, it gets discarded.
+                 Otherwise, it gets added to the rejectedProcesses in order to get another chance in the future.
+                  */
+                 else {
+                     boolean flag = false;
+                     int[] blockSizes = mmu.getAvailableBlockSizes();
+                     for (int blockSize : blockSizes)
+                         if ( blockSize >= process.getMemoryRequirements()) {
+                             flag = true;
+                             break;
+                         }
+                     if (flag)
+                        rejectedProcesses.add(process);
+                     else
+                         processesCount--;
+                 }
             }
-
         /*
-        stateType = -1: Checks if there are processes in the state NEW. If there are and there is a process running,
-                        the stateType gets updated to 0 (in order to stop the current process at the next cycle).
-                        If there is no process running, the scheduler gets updated with the new processes.
-                        If there are no new processes, then the cpu continues running the current one (if there is a current one)
-                        by running checkCurrentProcess().
-        stateType = 0: The current process gets interrupted because there are new processes trying to get added in the scheduler.
-        stateType = 1: The process starts running.
+        stateType = 0: There isn't a running process and there are NEW processes waiting to be READY'd
+        ***NOTE*** A process goes from NEW to READY only if another process is getting switched
+                   (after its quantum time is finished and before the next process starts)
+                   or if a process just terminated.
+        stateType = 1: A process gets fetched from the scheduler. The action that the cpu must take is decided in checkCurrentProcess().
+        stateType = 2: The process starts running.
          */
-        switch(stateType) {
-            case -1:
-                if (newProcesses.size() > 0) {
-                    if (!processRunning) {
-                        System.out.println("Process " + newProcesses.get(0).getPCB().getPid() + ": New -> Ready");
-                        newProcesses.get(0).getPCB().setState(ProcessState.READY, clock);
-                        scheduler.addProcess(newProcesses.get(0));
-                        newProcesses.remove(0);
-                    }
-                    else {
-                        System.out.println("Waiting (Stopping Process)");
-                        stateType = 0;
-                    }
-                }
-                else {
-                    previousProcess = currentProcess;
-                    previousProcessObject = currentProcessObject;
-                    currentProcessObject = scheduler.getNextProcess();
-                    if (currentProcessObject != null)
-                        checkCurrentProcess();
-                    else
-                        System.out.println("Waiting");
-                }
-                break;
-            case 0:
-                System.out.println("Process " + currentProcess + ": Running -> Ready");
-                currentProcessObject.waitInBackground();
-                currentProcessObject.getPCB().setState(ProcessState.READY, clock - 1);
-                processRunning = false;
-                stateType = -1;
-                break;
-            case 1:
+        switch (stateType) {
+            case 0 -> {
+                System.out.println("Process " + newProcesses.get(0).getPCB().getPid() + ": New -> Ready");
+                newProcesses.get(0).getPCB().setState(ProcessState.READY, clock);
+                scheduler.addProcess(newProcesses.get(0));
+                newProcesses.remove(0);
+                if (newProcesses.size() == 0)//If all NEW processes have been READY'd the program continues.
+                    if (switchFlag) { //If a process was about to be switched.
+                        stateType = 2;
+                        switchFlag = false;
+                        processRunning = true;
+                    } else
+                        stateType = 1;
+            }
+            case 1 -> {
+                previousProcess = currentProcess;
+                previousProcessObject = currentProcessObject;
+                currentProcessObject = scheduler.getNextProcess();
+                if (currentProcessObject != null)
+                    checkCurrentProcess();
+                else
+                    System.out.println("Waiting");
+            }
+            case 2 -> {
                 System.out.println("Process " + currentProcess + ": Ready -> Running");
                 currentProcessObject.run();
                 currentProcessObject.getPCB().setState(ProcessState.RUNNING, clock);
-                processRunning = true;
-                stateType = -1;
-                break;
+                stateType = 1;
+            }
         }
 
         /*
@@ -123,10 +133,42 @@ public class CPU {
         while (rejectedProcesses.size() > 0 && i < rejectedProcesses.size()) {
             if (mmu.loadProcessIntoRAM(rejectedProcesses.get(i))) {
                 newProcesses.add(rejectedProcesses.get(i));
+                System.out.println("Process " + rejectedProcesses.get(i).getPCB().getPid() + ": loaded");
                 rejectedProcesses.remove(i);
             }
             else
                 i++;
+        }
+    }
+
+    /*
+    Checks what the condition of the current process is and if it should stop, start or continue running.
+    First block: the process continues running.
+    Second block: the process starts running.
+    Third block: the process that's running must be switched.
+     */
+    private void checkCurrentProcess() {
+        currentProcess = currentProcessObject.getPCB().getPid();
+        if (currentProcess == previousProcess && processRunning) {
+            System.out.println("Process " + currentProcess + ": Running");
+            checkBurstTime();
+        }
+        else if (previousProcessObject == null || !processRunning) {
+            System.out.println("Waiting (Starting process)");
+            stateType = 2;
+            processRunning = true;
+        }
+        else {
+            System.out.println("Process " + previousProcess + ": Running -> Ready (Switching)");
+            previousProcessObject.waitInBackground();
+            previousProcessObject.getPCB().setState(ProcessState.READY, clock);
+            if (newProcesses.size() > 0) { //A process is about to be switched, so the program checks if there are NEW processes pending.
+                stateType = 0;
+                processRunning = false;
+                switchFlag = true;
+            }
+            else
+                stateType = 2;
         }
     }
 
@@ -157,30 +199,10 @@ public class CPU {
             currentProcessObject = null;
             currentProcess = 0;
             processRunning = false;
-        }
-    }
-
-    /*
-    Checks what the condition of the current process is and if it should stop, start or continue running.
-    First block: the process continues running.
-    Second block: the process starts running (stateType = 1).
-    Third block: the process that's running must be switched.
-     */
-    private void checkCurrentProcess() {
-        currentProcess = currentProcessObject.getPCB().getPid();
-        if (currentProcess == previousProcess && processRunning) {
-            System.out.println("Process " + currentProcess + ": Running");
-            checkBurstTime();
-        }
-        else if (previousProcessObject == null || !processRunning) {
-            System.out.println("Waiting (Starting process)");
-            stateType = 1;
-        }
-        else {
-            System.out.println("Process " + previousProcess + ": Running -> Ready (Switching)");
-            previousProcessObject.waitInBackground();
-            previousProcessObject.getPCB().setState(ProcessState.READY, clock);
-            stateType = 1;
+            if (newProcesses.size() > 0) //The process has been terminated, so the program checks if there are NEW processes pending.
+                stateType = 0;
+            else
+                stateType = 1;
         }
     }
 }

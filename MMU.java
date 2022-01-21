@@ -6,7 +6,7 @@ public class MMU {
     private MemoryAllocationAlgorithm algorithm;
     private ArrayList<MemorySlot> currentlyUsedMemorySlots;
 
-    private ArrayList<Process> loadedProcesses = new ArrayList<>();
+    
 
     public MMU(int[] availableBlockSizes, MemoryAllocationAlgorithm algorithm) {
         this.availableBlockSizes = availableBlockSizes;
@@ -14,13 +14,10 @@ public class MMU {
         this.currentlyUsedMemorySlots = new ArrayList<MemorySlot>();
     }
 
-    /**
-     * Getter 
-     * @return loaded processes
-     */
-    public ArrayList<Process> getLoadedProcesses(){
-        return this.loadedProcesses;
-    }   
+	
+	public int[] getAvailableBlockSizes(){
+		return availableBlockSizes;
+	}  
 
     public ArrayList<MemorySlot> getCurrentlyUsMemorySlots(){
         return this.currentlyUsedMemorySlots;

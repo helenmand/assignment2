@@ -35,11 +35,10 @@ public class SRTF extends Scheduler {
 	    	// Checks if the process has not found a place to add to the array
 	    	if(!found) {
 	    		// the process has the biggest burst time
-	    		processes.add(index,p); // Added at the end of the array
-	   			BurstTimes.add(index,p.getBurstTime());
+	    		processes.add(p); // Added at the end of the array
+	   			BurstTimes.add(p.getBurstTime());
 	   		}
     	}
-    		
     }
     
     public Process getNextProcess() {
@@ -58,19 +57,20 @@ public class SRTF extends Scheduler {
     		else {
     			// checks if the process is in state RUNNING
     			if(processes.get(0).getPCB().getState().equals(ProcessState.RUNNING)) {
-	    			// Checks if the process is over
-		    		if(BurstTimes.get(0)==0) {
+	    			// Checks if the process is the last time it is executed
+		    		if(BurstTimes.get(0)==1) {
 		    			// remove the first place of array 
 		    			BurstTimes.remove(0);
 		    		}
-		    		
-		    		// Update the burst time of a process to be executed 
-	    			int newBurstTime=BurstTimes.get(0)-1;
-		    		
-			    	// Remove the old time
-			    	BurstTimes.remove(0);
-			    	// Add the new time 
-			    	BurstTimes.add(0,newBurstTime);
+		    		else {
+			    		// Update the burst time of a process to be executed 
+		    			int newBurstTime=BurstTimes.get(0)-1;
+			    		
+				    	// Remove the old time
+				    	BurstTimes.remove(0);
+				    	// Add the new time 
+				    	BurstTimes.add(0,newBurstTime);
+		    		}
 		    		
 			    	// return the first process from array 
 			    	// that has the shortest remaining time first
