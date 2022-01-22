@@ -23,17 +23,18 @@ public class BestFit extends MemoryAllocationAlgorithm {
          * loaded into if the process fits. In case the process doesn't fit, it
          * should return -1. */
 
-        int minMax = 2147483647; // maximun possible value of the size of the block
+        int minMax = 2147483646; // maximun possible value of the size of the block
         int block_start = 0; int block_end = 0; // start/end of the current block
 
         ArrayList<Integer[]> available_slots = new ArrayList<Integer[]>();
         Integer[] best_slots = new Integer[2];
 
         for (int block : availableBlockSizes){
-            // if the block is smaller than the size of the process there is no need to check it
-            if (block < p.getMemoryRequirements()){ continue; }
-
             block_end = block_start + block - 1; // updating current block end
+
+            // if the block is smaller than the size of the process there is no need to check it
+            if (block < p.getMemoryRequirements()){ block_start += block; continue; }
+
             // getting the avaible memory slots of the current block
             available_slots = getFreeSpaces(currentlyUsedMemorySlots, block_start, block_end);
 

@@ -29,10 +29,11 @@ public class WorstFit extends MemoryAllocationAlgorithm {
         Integer[] worst_slots = new Integer[2];
 
         for (int block : availableBlockSizes){
-            // if the block is smaller than the size of the process there is no need to check it
-            if (block < p.getMemoryRequirements()){ continue; }
-
             block_end = block_start + block - 1; // updating current block end
+            
+            // if the block is smaller than the size of the process there is no need to check it
+            if (block < p.getMemoryRequirements()){ block_start += block; continue; }
+
             // getting the avaible memory slots of the current block
             available_slots = getFreeSpaces(currentlyUsedMemorySlots, block_start, block_end);
 
