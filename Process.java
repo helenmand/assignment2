@@ -6,6 +6,8 @@ public class Process {
     private int memoryRequirements;
     private int memoryLocation=-1;
 
+    private int clock;
+
     
     
     public Process(int arrivalTime, int burstTime, int memoryRequirements) {
@@ -21,6 +23,10 @@ public class Process {
         this.burstTime = burstTime;
         this.memoryRequirements = memoryRequirements;
         this.pcb = new ProcessControlBlock(pid);
+    }
+
+    public void setClock(int clock) {
+        this.clock = clock;
     }
 
     public int getBurstTime() {
@@ -50,12 +56,14 @@ public class Process {
     public void run() {
         /* TODO: you need to add some code here
          * Hint: this should run every time a process starts running */
+        pcb.setState(ProcessState.RUNNING, clock);
         
     }
     
     public void waitInBackground() {
         /* TODO: you need to add some code here
          * Hint: this should run every time a process stops running */
+        pcb.setState(ProcessState.READY, clock);
         
     }
 
