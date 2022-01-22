@@ -30,7 +30,7 @@ public class WorstFit extends MemoryAllocationAlgorithm {
 
         for (int block : availableBlockSizes){
             block_end = block_start + block - 1; // updating current block end
-            
+
             // if the block is smaller than the size of the process there is no need to check it
             if (block < p.getMemoryRequirements()){ block_start += block; continue; }
 
@@ -48,7 +48,7 @@ public class WorstFit extends MemoryAllocationAlgorithm {
             }
             block_start += block; // update next block's start
         }
-        if(fit){ address = worst_slots[0]; } // changing the address when the process fits
+        if(fit){ address = worst_slots[0]; } // changing the address when the process fits.
         return address;
     }
     

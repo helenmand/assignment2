@@ -49,7 +49,7 @@ public class BestFit extends MemoryAllocationAlgorithm {
             }
             block_start += block; // update next block's start
         }
-        if(fit){ address = best_slots[0]; } // changing the address when the process fits
+        if(fit){ address = best_slots[0]; } // changing the address when the process fits.
         return address;
     }
     
