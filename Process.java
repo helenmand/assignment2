@@ -86,7 +86,7 @@ public class Process {
     public double getTurnAroundTime() {
         /* TODO: you need to add some code here
          * and change the return value */
-        return pcb.getInitialReadyTime() - pcb.getStopTimes().get(-1);
+        return pcb.getStopTimes().get(pcb.getStopTimes().size()-1) - pcb.getInitialReadyTime();
     }
 
     
