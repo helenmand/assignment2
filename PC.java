@@ -13,22 +13,9 @@ public class PC {
         final int[] availableBlockSizes = {15, 40, 50, 60}; // sizes in kB
         MemoryAllocationAlgorithm algorithm = new NextFit(availableBlockSizes);
         MMU mmu = new MMU(availableBlockSizes, algorithm);        
-        Scheduler scheduler = new FCFS();
+        Scheduler scheduler = new RoundRobin(1);
         CPU cpu = new CPU(scheduler, mmu, processes);
         cpu.run();
-
-        for(Process p : processes) {
-            System.out.println("");
-            System.out.println("--PROCESS " + p.getPCB().getPid() + "---");
-            System.out.println("Arrival Time: " + p.getArrivalTime());
-            System.out.println("Burst Time: " + p.getBurstTime());
-            System.out.println("Memory Requirements: " + p.getMemoryRequirements());
-            System.out.println("Memory Location: " + p.getMemoryLocation());
-            System.out.println("Waiting Time: " + p.getWaitingTime());
-            System.out.println("Response Time: " + p.getResponseTime());
-            System.out.println("Turnaround Time: " + p.getTurnAroundTime());
-            System.out.println("");
-        }
     }
 
 }
