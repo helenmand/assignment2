@@ -96,7 +96,8 @@ public class CPU {
         switch(stateType) {
             case 0:
                 System.out.println("Process " + ProcessesToBeLoaded.get(0).getPCB().getPid() + ": New -> Ready");
-                ProcessesToBeLoaded.get(0).getPCB().setState(ProcessState.READY, clock);
+                ProcessesToBeLoaded.get(0).setClock(clock);
+                ProcessesToBeLoaded.get(0).waitInBackground();
                 scheduler.addProcess(ProcessesToBeLoaded.get(0));
                 ProcessesToBeLoaded.remove(0);
                 stateType = 1;
