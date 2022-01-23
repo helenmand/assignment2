@@ -153,7 +153,7 @@ public class CPU {
         boolean returnValue = false;
         if (mmu.loadProcessIntoRAM(process)) {
             returnValue = true;
-            System.out.println("Process " + process.getPCB().getPid() + " loaded");
+            System.out.println("Process " + process.getPCB().getPid() + " loaded in slot " + process.getMemoryLocation());
         }
         else {
             boolean flag = false;
@@ -208,7 +208,7 @@ public class CPU {
         int timePassed = 0;
         for (int i = size - 1; i >= 0; i--) {
             if (i == size - 1)
-                timePassed += (clock + 1) - (currentProcessObject.getPCB().getStartTimes().get(i) + 1);
+                timePassed += clock - currentProcessObject.getPCB().getStartTimes().get(i);
             else
                 timePassed += currentProcessObject.getPCB().getStopTimes().get(i) - (currentProcessObject.getPCB().getStartTimes().get(i) + 1);
         }
