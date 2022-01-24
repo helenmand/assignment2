@@ -22,7 +22,14 @@ public class MMU {
     public ArrayList<MemorySlot> getCurrentlyUsMemorySlots(){
         return this.currentlyUsedMemorySlots;
     }
-
+    /**
+     * This method creates a memory slot for the process in case it can fit in the memory
+     * 
+     * @param p is the process that will check if can fit in the memory
+     * 
+     * @return a boolean value true, in case it can fit the process and creates the slot 
+	 *			otherwise false means it can not fit the process in memory and the slot will not be created
+     */
     public boolean loadProcessIntoRAM(Process p) {
         boolean fit = false;
         /* TODO: you need to add some code here
@@ -33,7 +40,7 @@ public class MMU {
         // gets the memory address 
         p.setMemoryLocation(algorithm.fitProcess(p, currentlyUsedMemorySlots));
         
-        // Checks if space was found in the memory
+        // Checks if found space in the memory
         if(p.getMemoryLocation()!=-1) {
         	// Calculates BlockStart and BlockEnd
         	boolean found=false;
@@ -54,11 +61,11 @@ public class MMU {
     		// Creates slot
     		MemorySlot slot=new MemorySlot(p.getMemoryLocation(),p.getMemoryLocation()+p.getMemoryRequirements()-1,blockStart,blockEnd);
         	
-        	// Checks if the memory is empty
+        	// Checks if the memory is not empty
         	if(currentlyUsedMemorySlots.size()!=0) {
 		        found= false;
 		        index=0;
-		        // finds the specific position in the array in ascending order of indicators
+		        // finds the position in the array according to ascending order of start addresses
 		        while(index<currentlyUsedMemorySlots.size() && !found) {
 		        	// checks if it is in the correct position
 		        	if(slot.getStart()<currentlyUsedMemorySlots.get(index).getStart()) {
@@ -68,7 +75,7 @@ public class MMU {
 		        	index+=1;
 		        }
 		        
-		        // checks if the position was not found and added at the end of the array
+		        // checks if the position has not found so the slot will add at the end of the array
 		        if(!found) {
 		        	currentlyUsedMemorySlots.add(slot);
 		        }
