@@ -34,7 +34,7 @@ public abstract class MemoryAllocationAlgorithm {
                 }
             }
             
-            //if none of the currenly used slots are in this block, the whole block is free
+            //if none of the currently used slots are in this block, the whole block is free
             if(startFlag.isEmpty()) {
                 set = new Integer[2];
                 set[0] = blockStart;
